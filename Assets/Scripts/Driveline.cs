@@ -1,3 +1,116 @@
+using UnityEngine;
+
+public class Driveline : MonoBehaviour
+{
+    // Engine parameters
+    [SerializeField] private float engineFriction = 100.0f; // Nm constant value for engine friction
+    [SerializeField] private float engineInertia = 1.5f; // Engine inertia (kg*m^2)
+    [SerializeField] private float engineTorqueRating = 300.0f; // Maximum torque the engine can produce (Nm)
+
+    // Wheel parameters
+    [SerializeField] private float wheelInertia = 1.156f; // Wheel inertia (kg*m^2)
+    [SerializeField] private float wheelFriction = 100.0f; // Nm constant value for wheel friction
+
+    // Clutch parameters
+    [SerializeField] private float clutchMaxTorque = 50.0f; // Maximum torque the clutch can apply
+    [SerializeField] private float clutchCoefficientStatic = 150.0f; // Static friction coefficient (Nm)
+    [SerializeField] private float clutchCoefficientDynamic = 100.0f; // Dynamic friction coefficient (Nm)
+    [SerializeField] private float clutchSlipThreshold = 0.1f; // Threshold to begin slipping
+
+    // Clutch engagement value (0.0 to 1.0)
+    [SerializeField] private float clutchEngagement = 1.0f; // Start fully engaged
+
+    // Throttle parameter
+    [SerializeField] private float throttle = 0.0f; // Throttle value (0.0 to 1.0)
+
+    private float engineAngularVelocity = 0.0f; // Current engine angular velocity
+    private float wheelAngularVelocity = 0.0f; // Current wheel angular velocity
+
+    public float WheelAngularVelocity => wheelAngularVelocity;
+
+    public bool inTestMode { get; set; } = false;
+
+    public void SetInitialConditions(float initialEngineSpeed, float initialWheelSpeed, bool engageClutch)
+    {
+        // For tests
+        engineAngularVelocity = initialEngineSpeed;
+        wheelAngularVelocity = initialWheelSpeed;
+        clutchEngagement = engageClutch ? 1.0f : 0.0f;
+    }
+
+    private void Update()
+    {
+        // Control for clutch engagement (for testing purposes)
+        if (Input.GetKey(KeyCode.E)) // Press 'E' to engage the clutch
+        {
+            clutchEngagement = Mathf.Clamp(clutchEngagement + 1f * Time.deltaTime, 0.0f, 1.0f);
+        }
+        if (Input.GetKey(KeyCode.Q)) // Press 'Q' to disengage the clutch
+        {
+            clutchEngagement = Mathf.Clamp(clutchEngagement - 1f * Time.deltaTime, 0.0f, 1.0f);
+        }
+
+        // Control for throttle input (for testing purposes)
+        if (Input.GetKey(KeyCode.W)) // Press 'W' to increase throttle
+        {
+            throttle = Mathf.Clamp(throttle + 1f * Time.deltaTime, 0.0f, 1.0f);
+        }
+        if (Input.GetKey(KeyCode.S)) // Press 'S' to decrease throttle
+        {
+            throttle = Mathf.Clamp(throttle - 1f * Time.deltaTime, 0.0f, 1.0f);
+        }
+    }
+
+    public void FixedUpdate()
+    {
+        if (inTestMode == false)
+        {
+            OnFixedUpdate();
+        }
+    }
+
+    public void OnFixedUpdate()
+    {
+        float deltaTime = Time.fixedDeltaTime;
+
+        // Calculate engine friction torque
+        float maxEngineFrictionTorque = Mathf.Abs(engineAngularVelocity * engineInertia / deltaTime);
+        float engineFrictionTorque = Mathf.Clamp(engineFriction * Mathf.Sign(engineAngularVelocity), -maxEngineFrictionTorque, maxEngineFrictionTorque);
+
+        // Calculate produced torque based on throttle
+        float producedTorque = engineTorqueRating * throttle; // Torque produced by engine based on throttle
+
+        // Net torque on the engine
+        float engineNetTorque = producedTorque - engineFrictionTorque; // Friction opposes motion
+        engineAngularVelocity += (engineNetTorque / engineInertia) * deltaTime;
+
+        // Calculate clutch torque
+        float speedDifference = engineAngularVelocity - wheelAngularVelocity;
+        float clutchTorque;
+
+        // Determine whether the clutch is slipping or fully engaged
+        if (Mathf.Abs(speedDifference) < clutchSlipThreshold)
+        {
+            // Clutch is engaged (static)
+            clutchTorque = Mathf.Clamp(speedDifference * clutchCoefficientStatic * clutchEngagement, -clutchMaxTorque, clutchMaxTorque);
+        }
+        else
+        {
+            // Clutch is slipping (dynamic)
+            clutchTorque = Mathf.Clamp(speedDifference * clutchCoefficientDynamic * clutchEngagement, -clutchMaxTorque, clutchMaxTorque);
+        }
+
+        // Calculate wheel friction torque
+        float maxWheelFrictionTorque = Mathf.Abs(wheelAngularVelocity * wheelInertia / deltaTime);
+        float wheelFrictionTorque = Mathf.Clamp(wheelFriction * Mathf.Sign(wheelAngularVelocity), -maxWheelFrictionTorque, maxWheelFrictionTorque);
+
+        // Net torque on the wheel
+        float wheelNetTorque = clutchTorque - wheelFrictionTorque;
+        wheelAngularVelocity += (wheelNetTorque / wheelInertia) * deltaTime;
+    }
+}
+
+/*
 using UnityEditor;
 using UnityEngine;
 
@@ -124,3 +237,4 @@ public class Driveline : MonoBehaviour
         flywheelPower = flywheelTorque * flywheelAngularVelocity;
     }
 }
+*/

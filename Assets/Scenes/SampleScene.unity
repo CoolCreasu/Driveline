@@ -123,6 +123,75 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &353309371
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 353309372}
+  - component: {fileID: 353309374}
+  - component: {fileID: 353309373}
+  m_Layer: 0
+  m_Name: TestDriveLine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &353309372
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 353309371}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.7988014, y: -4.2797203, z: 2.2462502}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &353309373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 353309371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83c9694c955f9be44807a1138c83fccb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  engineFriction: 100
+  engineInertia: 1.5
+  engineTorqueRating: 300
+  wheelInertia: 1.156
+  wheelFriction: 100
+  clutchMaxTorque: 50
+  clutchCoefficientStatic: 150
+  clutchCoefficientDynamic: 100
+  clutchSlipThreshold: 0.1
+  clutchEngagement: 1
+  throttle: 0
+--- !u!114 &353309374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 353309371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2102c5ccb653545bafd4d556c3cf1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  driveline: {fileID: 353309373}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,18 +422,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83c9694c955f9be44807a1138c83fccb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  motorTorque: 1
-  motorInertia: 0.05
-  flywheelInertia: 0.1
-  gearRatio: 2
-  motorMomentum: 0
-  drivingGearMomentum: 0
-  drivenGearMomentum: 0
-  flywheelMomentum: 0
-  motorPower: 0
-  drivingGearPower: 0
-  drivenGearPower: 0
-  flywheelPower: 0
+  engineFriction: 100
+  engineInertia: 1.5
+  engineTorqueRating: 300
+  wheelInertia: 1.156
+  wheelFriction: 100
+  clutchMaxTorque: 50
+  clutchCoefficientStatic: 150
+  clutchCoefficientDynamic: 100
+  clutchSlipThreshold: 0.1
+  clutchEngagement: 1
+  throttle: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -372,3 +440,4 @@ SceneRoots:
   - {fileID: 963194228}
   - {fileID: 705507995}
   - {fileID: 2109458537}
+  - {fileID: 353309372}
